@@ -1,5 +1,6 @@
 import os
-from flask import render_template, request,make_response, Blueprint, url_for, send_from_directory
+from flask import render_template, request, make_response, Blueprint, url_for, send_from_directory, current_app
+from flask_app import db # -------------------> THIS IS THE DATABASE ABJECT <------------------------------------
 
 main = Blueprint("main", __name__)
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
