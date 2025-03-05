@@ -11,12 +11,34 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 def index():
 
     meta = {
-        "title": "Home - Flask App",
-        "description": "My Flask App",
+        "title": "Home - Speckle Invoice",
+        "description": "Join Speckle Invoice today to simplify invoice generation for your bussiness",
         "og_url": url_for('main.index', _external=True)
     }
 
     return render_template("index.html", meta=meta)
+
+@main.route("/signup", methods=["GET", "POST"])
+def signup():
+
+    meta = {
+        "title": "Sign Up - Speckle Invoice",
+        "description": "Create an account on Speck Invoice today. It's Free!",
+        "og_url": url_for('main.index', _external=True)
+    }
+
+    return render_template("signup.html", meta=meta)
+
+@main.route("/signin", methods=["GET", "POST"])
+def signin():
+
+    meta = {
+        "title": "Sign In - Speckle Invoice",
+        "description": "Sign in to Speck Invoice today",
+        "og_url": url_for('main.index', _external=True)
+    }
+
+    return render_template("signin.html", meta=meta)
 
 
 @main.route("/sitemap.xml")
