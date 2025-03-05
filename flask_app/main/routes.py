@@ -40,6 +40,17 @@ def signin():
 
     return render_template("signin.html", meta=meta)
 
+@main.route("/forgot", methods=["GET", "POST"])
+def forgot():
+
+    meta = {
+        "title": "Forgot Password - Speckle Invoice",
+        "description": "If your having issues remembering your password",
+        "og_url": url_for('main.index', _external=True)
+    }
+
+    return render_template("forgot.html", meta=meta)
+
 
 @main.route("/sitemap.xml")
 def sitemap():
@@ -53,7 +64,6 @@ def sitemap():
     response.headers["Content-Type"] = "application/xml"
   
     return response
-
 
 @main.route("/robots.txt")
 def static_from_root():
