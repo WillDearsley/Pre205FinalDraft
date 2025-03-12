@@ -40,6 +40,17 @@ def signin():
 
     return render_template("signin.html", meta=meta)
 
+@main.route("/dashboard", methods=["GET", "POST"])
+def dashboard():
+
+    meta = {
+        "title": "Dashboard - Speckle Invoice",
+        "description": "Sign in to Speck Invoice today",
+        "og_url": url_for('main.dashboard', _external=True)
+    }
+
+    return render_template("dashboard.html", meta=meta)
+
 
 @main.route("/sitemap.xml")
 def sitemap():
