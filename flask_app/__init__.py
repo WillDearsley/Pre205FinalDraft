@@ -12,6 +12,7 @@ def create_app():
     # Configure PostgreSQL database
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config["SECRET_KEY"] = "THE_BOYS_SECRET"
 
     # Initialize SQLAlchemy with the app
     db.init_app(app)
@@ -36,6 +37,8 @@ def create_app():
 
     # Create database tables (if they don't exist)
     with app.app_context():
+        # uncomment the following line if you want to restart the db from scratch
+        #db.drop_all()
         db.create_all()
 
     return app

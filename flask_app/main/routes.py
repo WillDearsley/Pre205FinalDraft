@@ -24,7 +24,7 @@ def signup():
     meta = {
         "title": "Sign Up - Speckle Invoice",
         "description": "Create an account on Speck Invoice today. It's Free!",
-        "og_url": url_for('main.index', _external=True)
+        "og_url": url_for('main.signup', _external=True)
     }
 
     return render_template("signup.html", meta=meta)
@@ -35,10 +35,22 @@ def signin():
     meta = {
         "title": "Sign In - Speckle Invoice",
         "description": "Sign in to Speck Invoice today",
-        "og_url": url_for('main.index', _external=True)
+        "og_url": url_for('main.signin', _external=True)
     }
 
     return render_template("signin.html", meta=meta)
+
+
+@main.route("/dashboard", methods=["GET", "POST"])
+def dashboard():
+
+    meta = {
+        "title": "Dashboard - Speckle Invoice",
+        "description": "Sign in to Speck Invoice today",
+        "og_url": url_for('main.dashboard', _external=True)
+    }
+
+    return render_template("dashboard.html", meta=meta)
 
 @main.route("/forgot", methods=["GET", "POST"])
 def forgot():
@@ -50,6 +62,7 @@ def forgot():
     }
 
     return render_template("forgot.html", meta=meta)
+
 
 
 @main.route("/sitemap.xml")
