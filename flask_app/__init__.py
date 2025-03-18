@@ -10,7 +10,9 @@ def create_app():
     app = Flask(__name__)
 
     # Configure PostgreSQL database
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    print("-----------------URI-------------------")
+    print(os.environ.get('DATABASE_URL'))
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL','postgresql://username:password@db:5432/mydatabase')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config["SECRET_KEY"] = "THE_BOYS_SECRET"
 
