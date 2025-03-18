@@ -69,7 +69,7 @@ def forgot():
 def sitemap():
     pages = [
       {"loc": url_for("main.index", _external=True)},
-      #{"loc": url_for("main.search", _external=True)},
+      {"loc": url_for("main.search", _external=True)},
     ]
   
     sitemap_xml = render_template("sitemap_template.xml", pages=pages)
