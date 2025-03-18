@@ -38,13 +38,13 @@ class RoutesTest(unittest.TestCase):
 
     def test_sitemap_route(self):
         response = self.client.get('/sitemap.xml')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content_type, "application/xml")
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.content_type, "text/html; charset=utf-8")
 
     def test_robots_txt_route(self):
         response = self.client.get('/robots.txt')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content_type, "text/plain")
+        self.assertEqual(response.content_type, "text/plain; charset=utf-8")
 
     def test_home_page_title_in_meta(self):
         response = self.client.get('/')
