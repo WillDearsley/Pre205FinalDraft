@@ -1,0 +1,122 @@
+{% extends "layout_dashboard.html" %}
+{% block content %}
+<section class="p-4 sm:ml-64">
+    <!-- Title Section -->
+    <div class="mb-8 p-4">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Profile Settings</h1>
+                <p class="mt-2 text-gray-600 dark:text-gray-400">Manage your account information and preferences.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="border-b border-gray-200 dark:border-gray-700">
+        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="profile-tabs" role="tablist">
+            <li class="mr-2" role="presentation">
+                <button class="inline-block p-4 border-b-2 rounded-t-lg text-blue-600 border-blue-600 active dark:text-blue-500 dark:border-blue-500" id="profile-tab" data-tabs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile</button>
+            </li>
+            <li class="mr-2" role="presentation">
+                <button class="inline-block p-4 border-b-2 rounded-t-lg text-gray-500 hover:text-gray-600 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:border-transparent" id="security-tab" data-tabs-target="#security" type="button" role="tab" aria-controls="security" aria-selected="false">Security</button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="mt-4">
+        <!-- Profile Tab -->
+        <div class="rounded-lg bg-white dark:bg-gray-800" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="p-4">
+                <div id="profile-message" class="mb-4"></div>
+                <form hx-post="{{ url_for('api.update_email') }}" 
+                      hx-target="#profile-message"
+                      class="space-y-6">
+                    <div class="mb-4">
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email Address</label>
+                        <input type="email" 
+                               name="email" 
+                               id="email" 
+                               value="{{ user.email }}"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
+                               required>
+                    </div>
+
+                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        Update Email
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Security Tab -->
+        <div class="hidden rounded-lg bg-white dark:bg-gray-800" id="security" role="tabpanel" aria-labelledby="security-tab">
+            <div class="p-4">
+                <div id="security-message" class="mb-4"></div>
+                <form hx-post="{{ url_for('api.update_password') }}" 
+                      hx-target="#security-message"
+                      class="space-y-6">
+                    <div class="mb-4">
+                        <label for="current_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Current Password</label>
+                        <input type="password" 
+                               name="current_password" 
+                               id="current_password"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                               required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="new_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Password</label>
+                        <input type="password" 
+                               name="new_password" 
+                               id="new_password"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                               required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="confirm_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm New Password</label>
+                        <input type="password" 
+                               name="confirm_password" 
+                               id="confirm_password"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                               required>
+                    </div>
+
+                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        Update Password
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Add Flowbite Tab Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('[data-tabs-target]');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            tabs.forEach(t => {
+                t.classList.remove('active', 'text-blue-600', 'border-blue-600', 'dark:text-blue-500', 'dark:border-blue-500');
+                t.classList.add('dark:border-transparent', 'text-gray-500', 'dark:text-gray-400');
+            });
+            
+            // Add active class to clicked tab
+            this.classList.add('active', 'text-blue-600', 'border-blue-600', 'dark:text-blue-500', 'dark:border-blue-500');
+            this.classList.remove('dark:border-transparent', 'text-gray-500', 'dark:text-gray-400');
+            
+            // Show target content
+            const targetId = this.getAttribute('data-tabs-target');
+            const targetContent = document.querySelector(targetId);
+            document.querySelectorAll('[role="tabpanel"]').forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            targetContent.classList.remove('hidden');
+        });
+    });
+});
+</script>
+{% endblock %} 

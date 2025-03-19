@@ -2,9 +2,17 @@ import os
 from flask import Flask
 from flask_assets import Bundle, Environment
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 
 # Initialize SQLAlchemy
 db = SQLAlchemy()
+# Initialize Flask-Login
+login_manager = LoginManager()
+
+@login_manager.user_loader
+def load_user(user_id):
+    from flask_app.models import Users
+    return Users.query.get(int(user_id))
 
 def create_app():
     app = Flask(__name__)
@@ -16,6 +24,9 @@ def create_app():
 
     # Initialize SQLAlchemy with the app
     db.init_app(app)
+    # Initialize Flask-Login with the app
+    login_manager.init_app(app)
+    login_manager.login_view = 'api.loginendpoint'  # Specify the login view
 
     # Initialize Flask-Assets
     assets = Environment(app)
