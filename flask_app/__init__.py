@@ -3,11 +3,14 @@ from flask import Flask
 from flask_assets import Bundle, Environment
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_mail import Mail
+from flask_app.config import Config
 
 # Initialize SQLAlchemy
 db = SQLAlchemy()
 # Initialize Flask-Login
 login_manager = LoginManager()
+mail = Mail()
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -22,18 +25,21 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config["SECRET_KEY"] = "THE_BOYS_SECRET"
 
+    app.config.from_object(Config)
+
     # Initialize SQLAlchemy with the app
     db.init_app(app)
     # Initialize Flask-Login with the app
     login_manager.init_app(app)
     login_manager.login_view = 'api.loginendpoint'  # Specify the login view
+    mail.init_app(app)
 
     # Initialize Flask-Assets
     assets = Environment(app)
     css = Bundle("src/main.css", output="dist/main.css")
     js = Bundle("src/*.js", output="dist/main.js")
 
-    # lets register our main and app routes
+    # Register main and api routes
     from flask_app.main.routes import main
     from flask_app.api.routes import api
 
@@ -48,8 +54,7 @@ def create_app():
 
     # Create database tables (if they don't exist)
     with app.app_context():
-        # uncomment the following line if you want to restart the db from scratch
-        #db.drop_all()
+        # db.drop_all()
         db.create_all()
 
     return app
