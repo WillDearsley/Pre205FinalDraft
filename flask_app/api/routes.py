@@ -3,8 +3,9 @@ import json
 from flask import render_template, request, make_response, Blueprint, url_for, flash, redirect, jsonify, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, current_user
+from flask_mail import Message
 
-from flask_app import db # -------------------> THIS IS THE DATABASE ABJECT <------------------------------------
+from flask_app import db, mail  # -------------------> THIS IS THE DATABASE ABJECT <------------------------------------
 from flask_app.models import Users, Companies, Invoices
 from datetime import datetime
 
@@ -30,11 +31,12 @@ def signupendpoint():
         return "<div class='alert error'>Email already exists!</div>"
 
     hashed_password = generate_password_hash(password, method="pbkdf2:sha256")
-    new_user = Users(email=email, password=hashed_password)
+    new_user = Users(email=email, password=hashed_password, is_verified=False)
     db.session.add(new_user)
     db.session.commit()
+    send_verification_email(new_user)
 
-    return "<div class='alert success'>Account created successfully!</div>"
+    return "<div class='alert success'>Account created! Please verify your email.</div>"
 
 
 @api.route("/loginendpoint", methods=["POST"])
@@ -43,6 +45,7 @@ def loginendpoint():
         email = request.form.get("email")
         password = request.form.get("password")
         remember = True if request.form.get("remember") else False
+
         if not email or not password:
             return "<div class='alert error'>Please provide both email and password</div>"
 
@@ -50,11 +53,12 @@ def loginendpoint():
 
         if not user or not check_password_hash(user.password, password):
             return "<div class='alert error'>Invalid email or password</div>"
-        
-        # Log the user in using Flask-Login
+
+        if not user.is_verified:
+            return "<div class='alert error'>Please verify your email before logging in</div>"
+
         login_user(user, remember=remember)
 
-        # Return success message with redirect
         return """
            <div class='alert success'>Login successful! Redirecting...</div>
            <script>
@@ -65,6 +69,40 @@ def loginendpoint():
            """
     except Exception as e:
         return f"<div class='alert error'>An error occurred: {str(e)}</div>"
+
+def send_verification_email(user):
+    token = user.generate_verification_token()
+    confirm_url = url_for("api.verify_email", token=token, _external=True)
+    print(f"Verification URL: {confirm_url}")  # <-- Log the generated URL
+    subject = "Please Confirm Your Email"
+    body = f"Click the link to verify your email: {confirm_url}"
+
+    print(f"Sending verification email to: {user.email}")  # <-- Add a print or logging here
+    msg = Message(subject, recipients=[user.email], body=body)
+    try:
+        mail.send(msg)
+    except Exception as e:
+        print(f"Error sending email: {str(e)}")
+
+@api.route("/verify-email/<token>")
+def verify_email(token):
+    email = Users.verify_token(token)
+
+    if not email:
+        return "<div class='alert error'>Invalid or expired token</div>"
+
+    user = Users.query.filter_by(email=email).first()
+
+    if not user:
+        return "<div class='alert error'>User not found</div>"
+
+    if user.is_verified:
+        return "<div class='alert success'>Your email is already verified</div>"
+
+    user.is_verified = True
+    db.session.commit()
+
+    return "<div class='alert success'>Email verified successfully! You can now log in.</div>"
 
 @api.route("/api/v1/search", methods=["POST"])
 def search():

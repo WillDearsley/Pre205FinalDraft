@@ -1,6 +1,9 @@
+from flask import current_app
 from flask_app import db
 from datetime import datetime
 from flask_login import UserMixin
+from itsdangerous import URLSafeTimedSerializer
+
 
 class Users(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -10,7 +13,21 @@ class Users(UserMixin, db.Model):
     password = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
+    is_verified = db.Column(db.Boolean, default=False)
     companies = db.relationship('Companies', backref='owner', lazy=True)
+
+    def generate_verification_token(self):
+        s = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+        return s.dumps(self.email, salt="email-confirmation")
+
+    @staticmethod
+    def verify_token(token, expiration=3600):
+        s = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+        try:
+            email = s.loads(token, salt="email-confirmation", max_age=expiration)
+        except:
+            return None
+        return email
 
     def __repr__(self):
         return f"<User {self.email}>"
